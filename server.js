@@ -2,7 +2,7 @@ const express = require("express");
 const dbService = require('./services/dbService');
 
 const app = express();
-const port = 8443;
+const port = process.env.PORT || 5000;
 
 app.use((req, res, next) => {
     console.log('The time is: ' + Date.now())
