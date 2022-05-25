@@ -1,6 +1,5 @@
 const express = require("express");
-const loginService = require('./services/loginService');
-const {Register} = require("./services/loginService");
+const {Login, Register} = require('./services/loginService');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,14 +26,14 @@ app.get("/images/:name", (request, response) => {
 
 app.post("/Login", (request, response) => {
     const body = request.body;
-    loginService.Login(body, (result) => {
+    Login(body, (result) => {
         response.status(result.status).json(result);
     });
 });
 
 app.post("/Register", (request, response) => {
     const body = request.body;
-    loginService.Register(body, (result) => {
+    Register(body, (result) => {
         response.status(result.status).json(result);
     });
 });

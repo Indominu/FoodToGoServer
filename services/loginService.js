@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const dbService = require('./services/dbService');
+const dbService = require('./dbService');
 require("dotenv").config();
 
-export function Login(body) {
+function Login(body) {
     dbService.select('Users', {email: body.username}, async (user) => {
         const result = {isLoggedIn: false, token: '', status: 401};
         if (user && (await bcrypt.compare(body.password, user.password))) {
@@ -23,7 +23,7 @@ export function Login(body) {
     })
 }
 
-export function Register(body) {
+function Register(body) {
     dbService.select('Users', {email: body.username}, async (user) => {
 
         const result = {newUserCreated: false, token: '', status: 409};
@@ -39,3 +39,5 @@ export function Register(body) {
         return result;
     })
 }
+
+module.exports = {Login, Register}
