@@ -4,7 +4,7 @@ const dbService = require('./dbService');
 require("dotenv").config();
 
 function Login(body) {
-    dbService.select('Users', {email: body.username}, async (user) => {
+    dbService.select('Users', {email: body.userName}, async (user) => {
         const result = {isLoggedIn: false, token: '', status: 401};
         if (user && (await bcrypt.compare(body.password, user.password))) {
 
@@ -24,7 +24,7 @@ function Login(body) {
 }
 
 function Register(body) {
-    dbService.select('Users', {email: body.username}, async (user) => {
+    dbService.select('Users', {email: body.userName}, async (user) => {
 
         const result = {newUserCreated: false, token: '', status: 409};
 

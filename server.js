@@ -38,18 +38,6 @@ app.post("/Register", (request, response) => {
     });
 });
 
-app.post("/:action", (request, response) => {
-    const action = request.params.action;
-    const body = request.body;
-
-    if (action === ":Login") {
-        dbService.login().then(user => response.status(200).json(user))
-    } else {
-        //response.status(401).json({msg: "Failed to login"});
-        response.status(201).json({msg: "Todo created successfully"});
-    }
-});
-
 app.put("/todos/:id", (request, response) => {
     const todo = todos.find((todo) => todo.id === request.params.id);
     if (todo) {
