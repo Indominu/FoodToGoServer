@@ -1,29 +1,39 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const {MongoClient, ServerApiVersion} = require('mongodb');
 require("dotenv").config();
 
 const uri = `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_USER_PASSWORD}@cluser0.rutj9.mongodb.net/?retryWrites=true&w=majority`;
-let client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-let dbo;
+const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1});
 
-;(async () => {
-    client = await client.connect();
-    dbo = client.db(process.env.DB_NAME);
-})()
+exports.select = async (table, query) => {
+    try {
+        await client.connect();
+        const database = client.db(process.env.DB_NAME);
+        let collection = database.collection(table);
 
-exports.select = async (table, key) => {
-    //client = await client.connect();
-    //const dbo = client.db(process.env.DB_NAME);
-    let collection = await dbo.collection(table)
-    //const user = await dbo.collection("Users").findOne({name: 'Foobar'});
-    //await client.close();
+        if (query) {
+            collection = await collection.findOne(query);
+        }
 
-    if (key) {
-        collection = await collection.findOne(key);
+        return collection;
+    } finally {
+        await client.close();
     }
-
-    return collection;
 }
 
-exports.insert = async (table, data) => {
-    await dbo.collection(table).insertOne(data)
+exports.insert = async (table, query) => {
+    try {
+        await client.connect();
+        const database = client.db(process.env.DB_NAME);
+        const collection = database.collection(table);
+
+        if (Array.isArray(query)) {
+            const options = {ordered: true};
+            await collection.insertMany(query, options);
+        } else {
+            await collection.insertOne(query);
+        }
+
+    } finally {
+        await client.close();
+    }
 }

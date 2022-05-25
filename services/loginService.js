@@ -4,14 +4,13 @@ const dbService = require('./dbService');
 require("dotenv").config();
 
 function Login(body) {
-    dbService.select('Users', {email: body.userName}, async (user) => {
+    return dbService.select('Users', {userName: body.userName}).then(async (user) => {
         const result = {isLoggedIn: false, token: '', status: 401};
         if (user && (await bcrypt.compare(body.password, user.password))) {
 
             result.isLoggedIn = true
             result.status = 200
-            result.token = jwt.sign(
-                {user_id: user._id, name: user.name},
+            result.token = jwt.sign({user_id: user._id, name: user.userName},
                 process.env.JWT_SECRET_KEY,
                 {
                     expiresIn: "5h",
@@ -24,8 +23,7 @@ function Login(body) {
 }
 
 function Register(body) {
-    dbService.select('Users', {email: body.userName}, async (user) => {
-
+    return dbService.select('Users', {userName: body.userName}).then(async (user) => {
         const result = {newUserCreated: false, token: '', status: 409};
 
         if (!user) {

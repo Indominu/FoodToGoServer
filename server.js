@@ -1,13 +1,13 @@
 const express = require("express");
+const bodyParser = require('body-parser');
 const {Login, Register} = require('./services/loginService');
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use((req, res, next) => {
-    console.log('The time is: ' + Date.now())
-    next();
-})
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.raw());
 
 const testArr = {
     id: 0,
@@ -26,16 +26,16 @@ app.get("/images/:name", (request, response) => {
 
 app.post("/Login", (request, response) => {
     const body = request.body;
-    Login(body, (result) => {
+    Login(body).then((result) => {
         response.status(result.status).json(result);
-    });
+    })
 });
 
 app.post("/Register", (request, response) => {
     const body = request.body;
-    Register(body, (result) => {
+    Register(body).then((result) => {
         response.status(result.status).json(result);
-    });
+    })
 });
 
 app.put("/todos/:id", (request, response) => {
