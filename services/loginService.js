@@ -5,10 +5,10 @@ require("dotenv").config();
 
 function Login(body) {
     return dbService.select('Users', {userName: body.userName}).then(async (user) => {
-        const result = {isLoggedIn: false, token: '', status: 401};
+        const result = {actionSuccess: false, token: '', status: 401};
         if (user && (await bcrypt.compare(body.password, user.password))) {
 
-            result.isLoggedIn = true
+            result.actionSuccess = true
             result.status = 200
             result.token = jwt.sign({user_id: user._id, name: user.userName},
                 process.env.JWT_SECRET_KEY,
@@ -24,11 +24,11 @@ function Login(body) {
 
 function Register(body) {
     return dbService.select('Users', {userName: body.userName}).then(async (user) => {
-        const result = {newUserCreated: false, token: '', status: 409};
+        const result = {actionSuccess: false, token: '', status: 409};
 
         if (!user) {
             result.status = 200;
-            result.newUserCreated = true;
+            result.actionSuccess = true;
             body.password = await bcrypt.hash(body.password, 10);
 
             dbService.insert('Users', body);
