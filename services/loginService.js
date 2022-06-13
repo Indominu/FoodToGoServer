@@ -23,12 +23,14 @@ function Register(body) {
         const result = {actionSuccess: false, token: '', status: 409};
 
         if (!user) {
-            const insertedId = await dbService.insert('Users', body, true);
 
             result.status = 200;
             result.actionSuccess = true;
-            result.token = CreateToken({user_id: insertedId.toString(), name: body.userName});
             body.password = await bcrypt.hash(body.password, 10);
+            
+            const insertedId = await dbService.insert('Users', body, true);
+
+            result.token = CreateToken({user_id: insertedId.toString(), name: body.userName});
         }
 
         return result;
