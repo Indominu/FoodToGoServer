@@ -22,7 +22,7 @@ exports.select = async (table, query, onlyOne) => {
     }
 }
 
-exports.insert = async (table, query, returnResult) => {
+exports.insert = async (table, query, returnInsertedId) => {
     try {
         await client.connect();
         const database = client.db(process.env.DB_NAME);
@@ -31,16 +31,16 @@ exports.insert = async (table, query, returnResult) => {
 
         if (Array.isArray(query)) {
             const options = {ordered: true};
-            await collection.insertMany(query, options, (err,docInserted) => {
-                queryResult = docInserted;
+            await collection.insertMany(query, options).then(result => {
+                queryResult = result.insertedId;
             });
         } else {
-            await collection.insertOne(query, (err,docInserted) => {
-                queryResult = docInserted;
+            await collection.insertOne(query).then(result => {
+                queryResult = result.insertedId;
             });
         }
 
-        if (returnResult) {
+        if (returnInsertedId) {
             return queryResult;
         }
 
