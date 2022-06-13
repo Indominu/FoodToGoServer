@@ -9,9 +9,10 @@ function Login(body) {
 
         if (user && (await bcrypt.compare(body.password, user.password))) {
 
+            result.userId = user._id.toString();
             result.actionSuccess = true
             result.status = 200
-            result.token = CreateToken({user_id: user._id.toString(), name: user.userName});
+            result.token = CreateToken({userId: result.userId, name: user.userName});
         }
 
         return result;
@@ -27,10 +28,12 @@ function Register(body) {
             result.status = 200;
             result.actionSuccess = true;
             body.password = await bcrypt.hash(body.password, 10);
-            
+
             const insertedId = await dbService.insert('Users', body, true);
 
-            result.token = CreateToken({user_id: insertedId.toString(), name: body.userName});
+            result.userId = insertedId.toString();
+
+            result.token = CreateToken({userId: result.userId, name: body.userName});
         }
 
         return result;
