@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const {Login, Register, AddFranchise, SearchFranchise} = require('./services/loginService');
 const {VerifyToken} = require("./services/tokenService");
 
-const nonTokenRequiredPaths = ['/Login', '/Register'];
+const nonTokenRequiredPaths = ['/', '/Login', '/Register'];
 
 const app = express();
 const port = process.env.PORT || 5000;

@@ -65,7 +65,7 @@ function SearchFranchise(body) {
                     from: "Products",
                     localField: "name",
                     foreignField: "franchise",
-                    as: "Products"
+                    as: "products"
                 }
         }
     ];
