@@ -13,10 +13,7 @@ exports.select = async (table, query, onlyOne) => {
         if (onlyOne) {
             collection = await collection.findOne(query);
         } else {
-            console.log('query', query);
-
             collection = await collection.find(query).toArray();
-            console.log('collection', collection);
         }
 
         return collection;

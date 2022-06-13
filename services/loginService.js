@@ -11,7 +11,7 @@ function Login(body) {
 
             result.actionSuccess = true
             result.status = 200
-            result.token = CreateToken({user_id: user._id, name: user.userName});
+            result.token = CreateToken({user_id: user._id.toString(), name: user.userName});
         }
 
         return result;
@@ -25,7 +25,7 @@ function Register(body) {
         if (!user) {
             result.status = 200;
             result.actionSuccess = true;
-            result.token = CreateToken({user_id: user._id, name: body.userName});
+            result.token = CreateToken({user_id: user._id.toString(), name: body.userName});
             body.password = await bcrypt.hash(body.password, 10);
 
             dbService.insert('Users', body);
