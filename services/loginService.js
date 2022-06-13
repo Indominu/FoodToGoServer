@@ -23,12 +23,13 @@ function Register(body) {
         const result = {actionSuccess: false, token: '', status: 409};
 
         if (!user) {
+            const newUser = await dbService.insert('Users', body, true);
+
             result.status = 200;
             result.actionSuccess = true;
-            result.token = CreateToken({user_id: user._id.toString(), name: body.userName});
-            body.password = await bcrypt.hash(body.password, 10);
+            result.token = CreateToken({user_id: newUser._id.toString(), name: newUser.userName});
+            body.password = await bcrypt.hash(newUser.password, 10);
 
-            dbService.insert('Users', body);
         }
 
         return result;
@@ -48,8 +49,8 @@ function AddFranchise(body) {
 
             products.map((item) => item.franchise = franchise.name)
 
-            await dbService.insert('Franchise', franchise);
-            await dbService.insert('Products', products);
+            await dbService.insert('Franchise', franchise, false);
+            await dbService.insert('Products', products, false);
         }
 
         return result;

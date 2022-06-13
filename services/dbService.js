@@ -22,17 +22,26 @@ exports.select = async (table, query, onlyOne) => {
     }
 }
 
-exports.insert = async (table, query) => {
+exports.insert = async (table, query, returnResult) => {
     try {
         await client.connect();
         const database = client.db(process.env.DB_NAME);
         const collection = database.collection(table);
+        let queryResult;
 
         if (Array.isArray(query)) {
             const options = {ordered: true};
-            await collection.insertMany(query, options);
+            await collection.insertMany(query, options, (err,docInserted) => {
+                queryResult = docInserted;
+            });
         } else {
-            await collection.insertOne(query);
+            await collection.insertOne(query, (err,docInserted) => {
+                queryResult = docInserted;
+            });
+        }
+
+        if (returnResult) {
+            return queryResult;
         }
 
     } finally {
