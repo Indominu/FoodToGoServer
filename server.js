@@ -1,6 +1,4 @@
 const express = require("express");
-const {createServer} = require("http");
-const {Server} = require("socket.io");
 const bodyParser = require('body-parser');
 const {Login, Register, AddFranchise, SearchFranchise} = require('./services/loginService');
 const {VerifyToken} = require("./services/tokenService");
@@ -8,8 +6,6 @@ const {VerifyToken} = require("./services/tokenService");
 const nonTokenRequiredPaths = ['/', '/Login', '/Register'];
 
 const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, { /* options */});
 const port = process.env.PORT || 5000;
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -20,8 +16,8 @@ app.use((request, response, next) => {
     const tokenRequiredPath = nonTokenRequiredPaths?.includes(request?.path);
 
     if (!validToken && !tokenRequiredPath) {
-        response.status(401).json({actionSuccess: false, msg: 'Missing, invalid or expired token'});
-        return;
+        //response.status(401).json({actionSuccess: false, msg: 'Missing, invalid or expired token'});
+        //return;
     }
     next();
 });
@@ -30,10 +26,6 @@ const testArr = {
     id: 0,
     title: "Works"
 }
-
-io.on("connection", (socket) => {
-    // ...
-});
 
 app.get("/", (request, response) => {
     console.log('test1');
@@ -45,11 +37,10 @@ app.post("/SearchFranchise", (request, response) => {
     SearchFranchise(body).then((result) => {
         const {['status']: status, ...data} = result;
         response.status(status).json(data);
-    });
-});
+    });});
 
-app.get("/images/:name", (request, response) => {
-    const name = request.params.name;
+app.get("/Images/:imageName", (request, response) => {
+    const name = request.params.imageName;
     response.status(200).json(testArr.find((test) => test.id === name));
 });
 
@@ -98,6 +89,6 @@ app.delete("/todos/:id", (request, response) => {
     response.status(404).json({msg: "Todo not found"});
 });
 
-httpServer.listen(port, () => {
+app.listen(port, () => {
     console.log(`Server listening at https://localhost:${port}`);
 });
